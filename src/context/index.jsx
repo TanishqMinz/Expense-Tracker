@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 
 export const GlobalContext = createContext(null);
 
@@ -16,16 +16,7 @@ export default function GlobalState({ children }) {
     return savedTransactions ? JSON.parse(savedTransactions) : [];
   });
 
-  useEffect(() => {
-    localStorage.setItem('transactions', JSON.stringify(allTransactions));
-    updateTotals();
-  });
-
-  useEffect(() => {
-    updateTotals();
-  });
-
-  function updateTotals() {
+  const updateTotals = useCallback(() => {
     let income = 0;
     let expense = 0;
 
@@ -39,7 +30,16 @@ export default function GlobalState({ children }) {
 
     setTotalIncome(income);
     setTotalExpense(expense);
-  }
+  }, [allTransactions])
+
+  useEffect(() => {
+    localStorage.setItem('transactions', JSON.stringify(allTransactions));
+    updateTotals();
+  }, [allTransactions,updateTotals]);
+
+  useEffect(() => {
+    updateTotals();
+  }, [updateTotals]);
 
   function handleFormSubmit(currentFormData) {
     if (!currentFormData.description || !currentFormData.amount) return;

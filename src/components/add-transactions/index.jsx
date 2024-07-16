@@ -28,11 +28,12 @@ export default function TransactionForm({ onClose, isOpen }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (formData.amount < 0) {
-      setError('Amount cannot be negative');
+    if (formData.amount <= 0) {
+      setError('Amount must be greater than zero');
       return;
     }
     handleFormSubmit(formData);
+    setFormData({ type: 'income', amount: 0, description: "" }); // Reset form data
     onClose();
   }
 
@@ -46,11 +47,23 @@ export default function TransactionForm({ onClose, isOpen }) {
           <ModalBody>
             <FormControl>
               <FormLabel>Enter description</FormLabel>
-              <Input placeholder="Enter transaction description" name="description" type="text" onChange={handleFormChange} />
+              <Input
+                placeholder="Enter transaction description"
+                name="description"
+                type="text"
+                value={formData.description}
+                onChange={handleFormChange}
+              />
             </FormControl>
             <FormControl isInvalid={error}>
               <FormLabel>Enter amount</FormLabel>
-              <Input placeholder="Enter transaction amount" name="amount" type="number" onChange={handleFormChange} />
+              <Input
+                placeholder="Enter transaction amount"
+                name="amount"
+                type="number"
+                value={formData.amount}
+                onChange={handleFormChange}
+              />
               {error && <FormErrorMessage>{error}</FormErrorMessage>}
             </FormControl>
             <RadioGroup mt="5" value={formData.type} onChange={handleTypeChange}>

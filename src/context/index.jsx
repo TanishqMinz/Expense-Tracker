@@ -37,10 +37,6 @@ export default function GlobalState({ children }) {
     updateTotals();
   }, [allTransactions,updateTotals]);
 
-  useEffect(() => {
-    updateTotals();
-  }, [updateTotals]);
-
   function handleFormSubmit(currentFormData) {
     if (!currentFormData.description || !currentFormData.amount) return;
     const newTransaction = { ...currentFormData, id: Date.now() };

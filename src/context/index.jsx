@@ -30,12 +30,12 @@ export default function GlobalState({ children }) {
 
     setTotalIncome(income);
     setTotalExpense(expense);
-  }, [allTransactions])
+  }, [allTransactions]);
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(allTransactions));
     updateTotals();
-  }, [allTransactions,updateTotals]);
+  }, [allTransactions, updateTotals]);
 
   function handleFormSubmit(currentFormData) {
     if (!currentFormData.description || !currentFormData.amount) return;
@@ -48,6 +48,11 @@ export default function GlobalState({ children }) {
     setAllTransactions(updatedTransactions);
   }
 
+  function deleteAllTransactions(type) {
+    const updatedTransactions = allTransactions.filter(transaction => transaction.type !== type);
+    setAllTransactions(updatedTransactions);
+  }
+
   return (
     <GlobalContext.Provider value={{
       formData, setFormData,
@@ -55,7 +60,8 @@ export default function GlobalState({ children }) {
       totalIncome, setTotalIncome,
       allTransactions, setAllTransactions,
       handleFormSubmit,
-      deleteTransaction
+      deleteTransaction,
+      deleteAllTransactions
     }}>
       {children}
     </GlobalContext.Provider>

@@ -32,8 +32,8 @@ export default function TransactionForm({ onClose, isOpen }) {
       setError('Amount must be greater than zero');
       return;
     }
-    handleFormSubmit(formData);
-    setFormData({ type: 'income', amount: 0, description: "" }); // Reset form data
+    handleFormSubmit(formData); 
+    setFormData({ type: 'income', amount: 0, description: "" }); 
     onClose();
   }
 

@@ -23,11 +23,19 @@ export default function View({ type }) {
     setIsOpen(true);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (deleteAll) {
-      deleteAllTransactions(type);
+      try {
+        await deleteAllTransactions(type);
+      } catch (error) {
+        console.error('Failed to delete all transactions:', error);
+      }
     } else {
-      deleteTransaction(deleteId);
+      try {
+        await deleteTransaction(deleteId);
+      } catch (error) {
+        console.error('Failed to delete transaction:', error);
+      }
     }
     setIsOpen(false);
   }
@@ -43,7 +51,7 @@ export default function View({ type }) {
           {type === 'income' ? 'Income' : 'Expense'}
         </Heading>
         <Button colorScheme="red" onClick={handleDeleteAll}>
-          Delete All
+          Delete All Transactions
         </Button>
       </Flex>
       {
@@ -58,7 +66,7 @@ export default function View({ type }) {
             borderColor={type === 'expense' ? 'red.100' : 'blue.100'}
             p={'4'}
             borderRadius={'8'}
-            mb="3"
+            mb="3" 
           >
             <Flex alignItems={'center'} justifyContent={'center'}>
               <Text ml={'3'} fontWeight={'bold'} color={'gray.600'}>{item.description}</Text>
@@ -72,15 +80,16 @@ export default function View({ type }) {
           </Flex>
         ))
       }
-      {/* Confirmation Dialog */}
       <AlertDialog isOpen={isOpen} leastDestructiveRef={undefined}>
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {deleteAll ? `Delete All ${type === 'income' ? 'Income' : 'Expense'} Transactions` : "Delete Transaction"}
+              {deleteAll ? `Delete All ${type === 'income' ? 'Income' : 'Expense'} Transactions` : 'Delete Transaction'}
             </AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure you want to {deleteAll ? `delete all ${type === 'income' ? 'income' : 'expense'} transactions?` : "delete this transaction?"}
+              {deleteAll
+                ? `Are you sure you want to delete all ${type === 'income' ? 'income' : 'expense'} transactions?`
+                : 'Are you sure you want to delete this transaction?'}
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button onClick={cancelDelete}>Cancel</Button>

@@ -1,4 +1,7 @@
-import { createContext, useState, useEffect, useCallback } from "react";
+import { createContext, useState, useEffect } from "react";
+import Pocketbase from 'pocketbase';
+
+const pb = new Pocketbase('https://wrapped-sometime.pockethost.io/');
 
 export const GlobalContext = createContext(null);
 
@@ -11,12 +14,37 @@ export default function GlobalState({ children }) {
 
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
-  const [allTransactions, setAllTransactions] = useState(() => {
-    const savedTransactions = localStorage.getItem('transactions');
-    return savedTransactions ? JSON.parse(savedTransactions) : [];
-  });
+  const [allTransactions, setAllTransactions] = useState([]);
 
-  const updateTotals = useCallback(() => {
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        const records = await pb.collection('transactions').getFullList();
+        setAllTransactions(records);
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error);
+      }
+    }
+    fetchTransactions();
+  }, []);
+
+  useEffect(() => {
+    async function saveTransactions() {
+      try {
+        await Promise.all(allTransactions.map(async (transaction) => {
+          await pb.collection('transactions').update(transaction.id, transaction);
+        }));
+      } catch (error) {
+        console.error('Failed to save transactions:', error);
+      }
+    }
+    if (allTransactions.length > 0) {
+      saveTransactions();
+    }
+    updateTotals();
+  }, [allTransactions]);
+
+  function updateTotals() {
     let income = 0;
     let expense = 0;
 
@@ -30,27 +58,38 @@ export default function GlobalState({ children }) {
 
     setTotalIncome(income);
     setTotalExpense(expense);
-  }, [allTransactions]);
+  }
 
-  useEffect(() => {
-    localStorage.setItem('transactions', JSON.stringify(allTransactions));
-    updateTotals();
-  }, [allTransactions, updateTotals]);
-
-  function handleFormSubmit(currentFormData) {
+  async function handleFormSubmit(currentFormData) {
     if (!currentFormData.description || !currentFormData.amount) return;
-    const newTransaction = { ...currentFormData, id: Date.now() };
-    setAllTransactions([...allTransactions, newTransaction]);
+    try {
+      const newTransaction = { ...currentFormData };
+      const savedTransaction = await pb.collection('transactions').create(newTransaction);
+      setAllTransactions([...allTransactions, savedTransaction]);
+    } catch (error) {
+      console.error('Failed to submit form data:', error);
+    }
   }
 
-  function deleteTransaction(id) {
-    const updatedTransactions = allTransactions.filter(transaction => transaction.id !== id);
-    setAllTransactions(updatedTransactions);
+  async function deleteTransaction(id) {
+    try {
+      await pb.collection('transactions').delete(id);
+      const updatedTransactions = allTransactions.filter(transaction => transaction.id !== id);
+      setAllTransactions(updatedTransactions);
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+    }
   }
 
-  function deleteAllTransactions(type) {
-    const updatedTransactions = allTransactions.filter(transaction => transaction.type !== type);
-    setAllTransactions(updatedTransactions);
+  async function deleteAllTransactions(type) {
+    try {
+      const transactionsToDelete = allTransactions.filter(transaction => transaction.type === type);
+      await Promise.all(transactionsToDelete.map(transaction => pb.collection('transactions').delete(transaction.id)));
+      const updatedTransactions = allTransactions.filter(transaction => transaction.type !== type);
+      setAllTransactions(updatedTransactions);
+    } catch (error) {
+      console.error('Failed to delete all transactions of type:', type, error);
+    }
   }
 
   return (

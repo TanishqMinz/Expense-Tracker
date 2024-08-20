@@ -14,12 +14,12 @@ export default function Summary({ onClose, isOpen }) {
       </Heading>
       <Flex justifyContent={'space-around'} alignItems={'center'} bg={'gray.50'} w={'100%'} h={'100px'} border={'1px solid'} borderColor={'gray.100'} mt="4" p="2">
         <Flex flexDirection={'column'} alignItems={'center'} justifyContent={'center'} flex="1">
-          <Heading color={'gray.700'}>{totalIncome}</Heading>
-          <Text color={'gray.600'}>Total Income</Text>
-        </Flex>
-        <Flex flexDirection={'column'} alignItems={'center'} justifyContent={'center'} flex="1">
           <Heading color={'gray.700'}>{totalExpense}</Heading>
           <Text color={'gray.600'}>Total Expense</Text>
+        </Flex>
+        <Flex flexDirection={'column'} alignItems={'center'} justifyContent={'center'} flex="1">
+          <Heading color={'gray.700'}>{totalIncome}</Heading>
+          <Text color={'gray.600'}>Total Income</Text>
         </Flex>
       </Flex>
       <Box mt="4" width={'300px'} height={'300px'} display={'flex'} alignItems={'center'} justifyContent={'center'}>

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import Pocketbase from 'pocketbase';
 
 const pb = new Pocketbase('https://wrapped-sometime.pockethost.io/');
@@ -6,6 +6,27 @@ const pb = new Pocketbase('https://wrapped-sometime.pockethost.io/');
 export const GlobalContext = createContext(null);
 
 export default function GlobalState({ children }) {
+
+  const [user, setUser] = useState(pb.authStore.model)
+  
+  useEffect ( () => {
+    return pb.authStore.onChange(model => setUser(model))
+  }, [])
+
+  const register = useCallback(async (email,password) => {
+    return await pb
+                    .collection("users")
+                    .create ({email, password, passwordConfirm : password})
+  }, [] )
+  
+  const login = useCallback(async (email, password) => {
+    return await pb.collection("users").authWithPassword(email,password)
+  }, [])
+
+  const logout = useCallback( () => {
+    pb.authStore.clear()
+  }, [])
+
   const [formData, setFormData] = useState({
     type: 'income',
     amount: 0,
@@ -18,15 +39,18 @@ export default function GlobalState({ children }) {
 
   useEffect(() => {
     async function fetchTransactions() {
+      if (!user) return
       try {
-        const records = await pb.collection('transactions').getFullList();
+        const records = await pb.collection('transactions').getFullList({
+          filter: `user_id="${user.id}"`,
+        });
         setAllTransactions(records);
       } catch (error) {
         console.error('Failed to fetch transactions:', error);
       }
     }
     fetchTransactions();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     async function saveTransactions() {
@@ -61,15 +85,21 @@ export default function GlobalState({ children }) {
   }
 
   async function handleFormSubmit(currentFormData) {
-    if (!currentFormData.description || !currentFormData.amount) return;
+    if (!currentFormData.description || !currentFormData.amount || !user) return;
     try {
-      const newTransaction = { ...currentFormData };
+      const newTransaction =  { 
+        ...currentFormData,
+        user_id: user.id, 
+      };
+      console.log('User:', user.id)
       const savedTransaction = await pb.collection('transactions').create(newTransaction);
       setAllTransactions([...allTransactions, savedTransaction]);
+      console.log('All Transactions:', allTransactions);
     } catch (error) {
       console.error('Failed to submit form data:', error);
     }
   }
+  
 
   async function deleteTransaction(id) {
     try {
@@ -94,6 +124,7 @@ export default function GlobalState({ children }) {
 
   return (
     <GlobalContext.Provider value={{
+      register, login, logout, user,
       formData, setFormData,
       totalExpense, setTotalExpense,
       totalIncome, setTotalIncome,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import LoginForm from "../login-form";
 import RegisterForm from "../register-form";
-import { Box, Button, Text, VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 
 export default function AuthForms() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -10,33 +10,9 @@ export default function AuthForms() {
     <Box>
       <VStack spacing={4}>
         {isRegistering ? (
-          <>
-            <RegisterForm />
-            <Text>
-              Already have an account?{" "}
-              <Button
-                variant="link"
-                colorScheme="blue"
-                onClick={() => setIsRegistering(false)}
-              >
-                Login
-              </Button>
-            </Text>
-          </>
+          <RegisterForm onToggleForm={() => setIsRegistering(false)} />
         ) : (
-          <>
-            <LoginForm />
-            <Text>
-              Don’t have an account?{" "}
-              <Button
-                variant="link"
-                colorScheme="blue"
-                onClick={() => setIsRegistering(true)}
-              >
-                Register
-              </Button>
-            </Text>
-          </>
+          <LoginForm onToggleForm={() => setIsRegistering(true)} />
         )}
       </VStack>
     </Box>

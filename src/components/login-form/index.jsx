@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-export default function LoginForm() {
+export default function LoginForm({ onToggleForm }) {
   const { login } = useContext(GlobalContext);
   const [email, setEmail] = useState("janedoe@gmail.com");
   const [password, setPassword] = useState("test1234");
@@ -87,6 +87,17 @@ export default function LoginForm() {
         >
           Login
         </Button>
+
+        <Text>
+          Don’t have an account?{" "}
+          <Button
+            variant="link"
+            colorScheme="blue"
+            onClick={onToggleForm}
+          >
+            Register
+          </Button>
+        </Text>
       </VStack>
     </Box>
   );

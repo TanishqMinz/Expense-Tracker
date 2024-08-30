@@ -1,9 +1,10 @@
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
+import { GlobalContext } from "../../context";
 import {
-  FormControl,
-  FormLabel,
   Input,
   Button,
+  FormControl,
+  FormLabel,
   FormErrorMessage,
   Box,
   Heading,
@@ -11,9 +12,8 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { GlobalContext } from "../../context";
 
-export default function RegisterForm() {
+export default function RegisterForm({ onToggleForm }) {
   const { register } = useContext(GlobalContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,11 +26,12 @@ export default function RegisterForm() {
       await register(email, password);
       toast({
         title: "Registration successful",
-        description: "You have successfully registered!",
+        description: "You can now log in.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+      onToggleForm();
     } catch (err) {
       setError(err.message);
     }
@@ -49,10 +50,10 @@ export default function RegisterForm() {
     >
       <VStack spacing={4}>
         <Heading size="lg" color="blue.600">
-          Register
+          Sign Up
         </Heading>
         <Text fontSize="md" color="gray.500">
-          Create your account
+          Create an account to get started
         </Text>
 
         <FormControl isInvalid={!!error}>
@@ -87,6 +88,17 @@ export default function RegisterForm() {
         >
           Register
         </Button>
+
+        <Text>
+          Already have an account?{" "}
+          <Button
+            variant="link"
+            colorScheme="blue"
+            onClick={onToggleForm}
+          >
+            Login
+          </Button>
+        </Text>
       </VStack>
     </Box>
   );

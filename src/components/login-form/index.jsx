@@ -42,7 +42,7 @@ export default function LoginForm() {
       p={8}
       borderRadius="md"
       boxShadow="lg"
-      width="800px"
+      width={["sm", null, "md"]}
       maxW="md"
       mx="auto"
       mt={10}

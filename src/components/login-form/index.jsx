@@ -11,9 +11,12 @@ import {
   VStack,
   Text,
   useToast,
+  ScaleFade,
+  Icon,
 } from "@chakra-ui/react";
+import { FaUser } from "react-icons/fa";
 
-export default function LoginForm({ onToggleForm }) {
+export default function LoginForm({onToggleForm}) {
   const { login } = useContext(GlobalContext);
   const [email, setEmail] = useState("janedoe@gmail.com");
   const [password, setPassword] = useState("test1234");
@@ -25,8 +28,8 @@ export default function LoginForm({ onToggleForm }) {
     try {
       await login(email, password);
       toast({
-        title: "Login successful",
-        description: "Welcome back!",
+        title: "Welcome back!",
+        description: "You have logged in successfully.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -37,68 +40,74 @@ export default function LoginForm({ onToggleForm }) {
   }
 
   return (
-    <Box
-      bg="gray.50"
-      p={8}
-      borderRadius="md"
-      boxShadow="lg"
-      width={["sm", null, "md"]}
-      maxW="md"
-      mx="auto"
-      mt={10}
-    >
-      <VStack spacing={4}>
-        <Heading size="lg" color="blue.600">
-          Login
-        </Heading>
-        <Text fontSize="md" color="gray.500">
-          Please enter your credentials to continue
-        </Text>
+    <ScaleFade initialScale={0.9} in>
+      <Box
+        bg="gray.50"
+        p={10}
+        borderRadius="lg"
+        boxShadow="lg"
+        width={["sm", null, "md"]}
+        maxW="md"
+        mx="auto"
+        mt={10}
+      >
+        <VStack spacing={6}>
+          <Icon as={FaUser} w={12} h={12} color="blue.500" />
+          <Heading size="lg" color="blue.600">
+            Login to Your Account
+          </Heading>
+          <Text fontSize="md" color="gray.600" textAlign="center">
+            Access your expense tracker by entering your credentials
+          </Text>
 
-        <FormControl isInvalid={!!error}>
-          <FormLabel>Email</FormLabel>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            focusBorderColor="blue.500"
-            borderColor="gray.300"
-          />
-          <FormLabel mt={4}>Password</FormLabel>
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            focusBorderColor="blue.500"
-            borderColor="gray.300"
-          />
-          {error && (
-            <FormErrorMessage mt={2}>{error}</FormErrorMessage>
-          )}
-        </FormControl>
+          <FormControl isInvalid={!!error}>
+            <FormLabel fontWeight="semibold" mt={4}>Email</FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              focusBorderColor="blue.500"
+              borderColor="gray.300"
+              variant="filled"
+              size="lg"
+            />
+            <FormLabel fontWeight="semibold" mt={4}>Password</FormLabel>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              focusBorderColor="blue.500"
+              borderColor="gray.300"
+              variant="filled"
+              size="lg"
+            />
+            {error && <FormErrorMessage mt={2}>{error}</FormErrorMessage>}
+          </FormControl>
 
-        <Button
-          colorScheme="blue"
-          onClick={handleLogin}
-          width="full"
-          mt={6}
-        >
-          Login
-        </Button>
-
-        <Text>
-          Don’t have an account?{" "}
           <Button
-            variant="link"
             colorScheme="blue"
-            onClick={onToggleForm}
+            onClick={handleLogin}
+            width="full"
+            size="lg"
+            mt={6}
+            _hover={{ bg: "blue.600" }}
           >
-            Register
+            Login
           </Button>
-        </Text>
-      </VStack>
-    </Box>
+          <Text fontSize="sm" color="gray.600" mt={4}>
+            Don’t have an account?{" "}
+            <Button
+              variant="link"
+              colorScheme="blue"
+              onClick={onToggleForm} 
+            >
+              Register
+            </Button>
+          </Text>
+        </VStack>
+      </Box>
+    </ScaleFade>
   );
 }

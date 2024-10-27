@@ -81,6 +81,7 @@ export default function GlobalState({ children }) {
 
   const logout = useCallback(() => {
     pb.authStore.clear();
+    setUser(null);
     setTotalExpense(0);
     setTotalIncome(0);
     setAllTransactions([]);

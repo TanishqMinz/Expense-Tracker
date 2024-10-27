@@ -3,9 +3,9 @@ import Main from "./components/main";
 
 function App() {
   return (
-    <Container bg={'#D3D3D3'} maxW={'Container.3x1'} height={'100vh'} p={'0'}>
+    <Container maxW={'100%'} height={'100vh'} p={0}>
       <Flex height="100%" flexDirection="column" justifyContent="stretch">
-        <Box flex={1} bg="#D3D3D3">
+        <Box flex={1} boxShadow="md" borderRadius="md">
           <Main />
         </Box>
       </Flex>

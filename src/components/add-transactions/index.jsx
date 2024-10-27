@@ -42,10 +42,10 @@ export default function TransactionForm({ onClose, isOpen }) {
       <form onSubmit={handleSubmit}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add new transaction</ModalHeader>
+          <ModalHeader fontSize="lg" fontWeight="bold">Add new transaction</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
+          <ModalBody pb={6}>
+            <FormControl mb={4}>
               <FormLabel>Enter description</FormLabel>
               <Input
                 placeholder="Enter transaction description"
@@ -66,14 +66,14 @@ export default function TransactionForm({ onClose, isOpen }) {
               />
               {error && <FormErrorMessage>{error}</FormErrorMessage>}
             </FormControl>
-            <RadioGroup mt="5" value={formData.type} onChange={handleTypeChange}>
+            <RadioGroup mt={5} value={formData.type} onChange={handleTypeChange}>
               <Radio value="income" colorScheme="blue">Income</Radio>
-              <Radio ml="2" value="expense" colorScheme="red">Expense</Radio>
+              <Radio ml={4} value="expense" colorScheme="red">Expense</Radio>
             </RadioGroup>
           </ModalBody>
           <ModalFooter>
-            <Button mr="4" onClick={onClose}>Cancel</Button>
-            <Button type="submit">Add</Button>
+            <Button colorScheme="gray" mr={4} onClick={onClose}>Cancel</Button>
+            <Button colorScheme="blue" type="submit">Add</Button>
           </ModalFooter>
         </ModalContent>
       </form>
